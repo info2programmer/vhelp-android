@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="msapplication-tap-highlight" content="no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- This is a wide open CSP declaration. To lock this down for production, see below. -->
+    <meta http-equiv="Content-Security-Policy" content="default-src *; style-src 'self' http://* 'unsafe-inline'; script-src 'self' http://* 'unsafe-inline' 'unsafe-eval'"
+    />
+    <!-- Good default declaration:
+    * gap: is required only on iOS (when using UIWebView) and is needed for JS->native communication
+    * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
+    * Disables use of eval() and inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
+        * Enable inline JS: add 'unsafe-inline' to default-src
+        * Enable eval(): add 'unsafe-eval' to default-src
+    * Create your own at http://cspisawesome.com
+    -->
+    <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: 'unsafe-inline' https://ssl.gstatic.com; style-src 'self' 'unsafe-inline'; media-src *" /> -->
+
+    
+    <link rel="stylesheet" href="css/font-awesome.min.css" />
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/style.css" />
+    <script src='https://code.jquery.com/jquery-2.2.4.min.js'></script>
+    <script src="js/bootstrap.min.js"></script>
+    
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/1.18.4/TweenMax.min.js'></script>
+
+    <title>Hello World</title>
+</head>
+
+<body style="background-color:#FFCC00;">
+    <div class="container">
+        <div class="row">
+            <div class="holder">
+                <div id="photo-holder"></div>
+            </div>
+            <div id="preload"></div>
+        </div>
+    </div>
+    <script type="text/javascript" src="cordova.js"></script>
+    <script type="text/javascript" src="js/index.js"></script>
+    <script type="text/javascript">
+        app.initialize();
+    </script>
+</body>
+<script>
+    var photoCount = 2;
+    var pieceCount = 6;
+    var onPhoto = 0;
+    var pieceCompleteCount = 0;
+    var delay;
+
+    var transitions = ["center", "random"];
+    var transitionType = 0;
+
+    $(document).ready(function () {
+        preload();
+    });
+
+    function preload() {
+        for (var i = 0; i < photoCount; i++) {
+            $("#preload").append(
+                '<img src="images-vhelp/logo-vhelp1.jpg">'
+            );
+        }
+        $(window).load(function () {
+            setup();
+        });
+    }
+
+    function setup() {
+        $("#photo-holder").html("");
+        for (var i = 0; i < pieceCount; i++) {
+            var newWidth = (100 - 100 / pieceCount * i) / 100 * 100; //((pieceWidth - ((pieceWidth / pieceCount) * i)) / pieceWidth) * 100;
+            var newBackgroundSize = 100 + (100 - newWidth) / newWidth * 100; //100 + (100 - newWidth);
+            var newTop = 100 / pieceCount * i / 2;
+
+            $("#photo-holder").append(
+                '<div class="section" id="piece' +
+                i +
+                '" style="top: ' +
+                newTop +
+                "%; left: " +
+                newTop +
+                "%; width: " +
+                newWidth +
+                "%; height: " +
+                newWidth +
+                "%; background-size:" +
+                newBackgroundSize +
+                "%; background-image: url('images-vhelp/logo-vhelp1.jpg)" +
+                (500 + onPhoto) +
+                "')\"></div>"
+            );
+        }
+        nextSlide();
+    }
+
+    function nextSlide() {
+        clearInterval(delay);
+        pieceCompleteCount = 0;
+        ++onPhoto;
+        if (onPhoto >= photoCount) {
+            onPhoto = 0;
+        }
+
+        for (var i = 0; i < pieceCount; i++) {
+            var spinDelay = 0;
+            var spin = 360;
+            var piece = $("#piece" + i);
+
+            switch (transitions[transitionType]) {
+                case "random":
+                    spinDelay = Math.random() / 2;
+                    spin = Math.random() * 360;
+                    break;
+                case "center":
+                    spinDelay = (pieceCount - i) / 10;
+                    spin = 181;
+                    break;
+            }
+
+            TweenMax.to(piece, 1, {
+                delay: spinDelay,
+                directionalRotation: spin + "_long",
+                onComplete: completeRotation,
+                onCompleteParams: [piece],
+                ease: Power4.easeIn
+            });
+        }
+    }
+
+    function completeRotation(piece) {
+        piece.css(
+            "background-image",
+            "url(images-vhelp/logo-vhelp1.jpg)"
+        );
+        TweenMax.to(piece, 2, {
+            directionalRotation: "0_short",
+            onComplete: finishPieceanimation,
+            ease: Elastic.easeOut
+        });
+    }
+
+    function finishPieceanimation() {
+        ++pieceCompleteCount;
+        if (pieceCompleteCount == pieceCount) {
+            delay = setInterval(nextSlide, 1000);
+        }
+    }
+    var photoCount = 2;
+    var pieceCount = 6;
+    var onPhoto = 0;
+    var pieceCompleteCount = 0;
+    var delay;
+
+    var transitions = ['center', 'random']
+    var transitionType = 0;
+
+    $(document).ready(function () {
+        preload();
+    });
+
+    function preload() {
+        for (var i = 0; i < photoCount; i++) {
+            $('#preload').append('<img src="images-vhelp/logo-vhelp1.jpg">')
+        };
+        $(window).load(function () {
+            setup();
+        });
+    }
+
+    function setup() {
+        $('#photo-holder').html('');
+        for (var i = 0; i < pieceCount; i++) {
+            var newWidth = (((100 - (100 / pieceCount) * i)) / 100) * 100; //((pieceWidth - ((pieceWidth / pieceCount) * i)) / pieceWidth) * 100;
+            var newBackgroundSize = 100 + (100 - newWidth) / newWidth * 100; //100 + (100 - newWidth);
+            var newTop = ((100 / pieceCount) * i) / 2;
+
+            $('#photo-holder').append('<div class="section" id="piece' + i + '" style="top: ' + newTop + '%; left: ' + newTop + '%; width: ' + newWidth + '%; height: ' + newWidth + '%; background-size:' + newBackgroundSize + '%; background-image: url(images-vhelp/logo-vhelp1.jpg)"></div>')
+        };
+        nextSlide();
+    }
+
+    function nextSlide() {
+        clearInterval(delay);
+        pieceCompleteCount = 0;
+        ++onPhoto;
+        if (onPhoto >= photoCount) {
+            onPhoto = 0;
+        }
+
+        for (var i = 0; i < pieceCount; i++) {
+            var spinDelay = 6;
+            var spin = 360;
+            var piece = $('#piece' + i);
+
+            switch (transitions[transitionType]) {
+                case 'random':
+                    spinDelay = Math.random() / 2;
+                    spin = Math.random() * 360;
+                    break;
+                case 'center':
+                    spinDelay = (pieceCount - i) / 10;
+                    spin = 181;
+                    break;
+            }
+
+            TweenMax.to(piece, 1, {
+                delay: spinDelay,
+                directionalRotation: spin + '_long',
+                onComplete: completeRotation,
+                onCompleteParams: [piece],
+                ease: Power4.easeIn
+            })
+        }
+    }
+
+    function completeRotation(piece) {
+        piece.css('background-image', 'url(images-vhelp/logo-vhelp2.jpg)');
+        TweenMax.to(piece, 2, {
+            directionalRotation: '0_short',
+            onComplete: finishPieceanimation,
+            ease: Elastic.easeOut
+        })
+    }
+
+    function finishPieceanimation() {
+        ++pieceCompleteCount;
+        if (pieceCompleteCount == pieceCount) {
+            delay = setInterval(nextSlide, 5000);
+        }
+    }
+</script>
+</html>
