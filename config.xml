@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.onlineeducationservice.vhelp" version="1.0.3" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
-    <name>VHELP</name>
+<widget id="com.onlineeducationservice.vhelp" version="1.0.4" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
+    <name>VHELP-Android</name>
     <description>
         Education Help App
     </description>
@@ -72,6 +72,8 @@
     <plugin name="cordova-plugin-media-capture" spec="~3.0.1" />
     <plugin name="cordova-plugin-x-toast" spec="~2.6.0" />
     <plugin name="cordova-plugin-screen-orientation" spec="~3.0.1" />
+    <plugin name="cordova-plugin-firebase-messaging" spec="https://github.com/blakgeek/cordova-plugin-firebase-messaging">
+        <variable name="HANDLER_ACTION" value="FCM_NOTIFICATION_HANDLER" />
+    </plugin>
     <plugin name="cordova-plugin-fcm" spec="~2.1.2" />
-    <plugin name="cordova-plugin-firebase-messaging" spec="~0.12.0" />
 </widget>
